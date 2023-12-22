@@ -1,0 +1,115 @@
+<!--<link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css"/>-->
+<script src="{{url_for('static', filename='js/jquery-3.3.1.min.js')}}"></script>
+<!--<script type="text/javascript" src="//cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>-->
+<script>
+
+$(function () {
+
+  var dt_basic_table = $('.datatables-basic')
+
+
+  // Multilingual DataTable
+  // --------------------------------------------------------------------
+
+  if (dt_basic_table.length) {
+    var dt_basic = dt_basic_table.DataTable({
+      "responsive": true,
+      "autoWidth": false,
+      ajax: {
+            "method": "GET",
+            "url": '/list-posts',
+        },
+      columns: [
+        { data: 'title' },
+        { data: 'description' },
+        { data: '' },
+      ],
+      columnDefs: [
+        {
+          // Actions
+          targets: -1,
+          title: 'Descargar',
+          orderable: false,
+          render: function (data, type, full, meta) {
+          return (
+            '<button onclick="downloadFile(\''+full['image']+'\')" class="btn btn-info btn-sm mr-2">' +
+            feather.icons['download'].toSvg({ class: 'font-small-4' }) +
+            '</button>'
+            );
+          }
+        }
+      ],
+      
+      order: [[2, 'desc']],
+      dom:
+        '<"card-header border-bottom p-1"<"head-label"><"dt-action-buttons text-right"B>><"d-flex justify-content-between align-items-center mx-0 row"<"col-sm-12 col-md-6"l><"col-sm-12 col-md-6"f>>t<"d-flex justify-content-between mx-0 row"<"col-sm-12 col-md-6"i><"col-sm-12 col-md-6"p>>',
+      displayLength: 7,
+      lengthMenu: [7, 10, 25, 50, 75, 100],
+      buttons: [
+      ],
+      responsive: {
+        details: {
+          display: $.fn.dataTable.Responsive.display.modal({
+            header: function (row) {
+              var data = row.data();
+              return 'Details of ' + data['firstname'];
+            }
+          }),
+          type: 'column',
+          renderer: function (api, rowIdx, columns) {
+            var data = $.map(columns, function (col, i) {
+              return col.title !== '' // ? Do not show row in modal popup if title is blank (for check box)
+                ? '<tr data-dt-row="' +
+                    col.rowIndex +
+                    '" data-dt-column="' +
+                    col.columnIndex +
+                    '">' +
+                    '<td>' +
+                    col.title +
+                    ':' +
+                    '</td> ' +
+                    '<td>' +
+                    col.data +
+                    '</td>' +
+                    '</tr>'
+                : '';
+            }).join('');
+
+            return data ? $('<table class="table"/>').append(data) : false;
+          }
+        }
+      },
+      language: {
+        paginate: {
+          // remove previous & next text from pagination
+          previous: '&nbsp;',
+          next: '&nbsp;'
+        },
+        "search": "Buscar:",
+        "infoFiltered":   "(filtrado do total de _MAX_ entradas)",
+        "zeroRecords": "No hay resultados",
+        "loadingRecords": "Cargando...",
+        "lengthMenu": "Mostrar _MENU_ entradas",
+        "info": "Mostrando _START_ a _END_ de _TOTAL_ entradas",
+        "search": "Buscar:",
+        "responsive": true,
+      }
+    });
+    $('div.head-label').html('<h6 class="mb-0">Lista de archivos</h6>');
+  }
+});
+
+function downloadFile(filename) {
+    // Crea un enlace temporal
+    var element = document.createElement('a');
+    element.setAttribute('href', '/static/files/' + filename);
+    element.setAttribute('download', filename);
+
+    // Simula un clic en el enlace para iniciar la descarga
+    element.style.display = 'none';
+    document.body.appendChild(element);
+    element.click();
+    document.body.removeChild(element);
+  }
+ 
+</script>

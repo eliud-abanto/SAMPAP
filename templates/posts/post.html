@@ -1,0 +1,36 @@
+{% extends 'layout.html' %} {% block content %}
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/bs4/dt-1.11.3/datatables.min.css"/>
+<script type="text/javascript" src="https://cdn.datatables.net/v/bs4/dt-1.11.3/datatables.min.js"></script>
+<!-- Statistics Card -->
+<div class="col-xl-12 col-md-12 col-12">
+  <div class="card card-statistics">
+    <div class="card-body statistics-body">
+                <section id="basic-datatable">
+                  <div class="row">
+                      <div class="col-12">
+                          <div class="card">
+                            <div class="table-responsive">
+                              <table class="datatables-basic-post table">
+                                  <thead>
+                                      <tr>
+                                          <th>Titulo</th>
+                                          <th>Descripcion</th>
+                                          <th>Status</th>
+                                          <th>Action</th>
+                                      </tr>
+                                  </thead>
+                              </table>
+                            </div>
+                          </div>
+                      </div>
+                  </div> 
+              </section>
+    </div>
+  </div>
+</div>
+<script>
+  var BASE_URL = "{{ base_url }}";
+</script>
+<!--/ Statistics Card -->
+{% include 'posts/scripts.html' %}
+{% endblock %}

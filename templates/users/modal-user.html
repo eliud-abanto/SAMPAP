@@ -1,0 +1,188 @@
+<!-- Modal -->
+<div class="modal fade text-left" id="modalUser" tabindex="-1" role="dialog" aria-labelledby="myModalLabel33" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document" id="modals-slide-in">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="myModalLabel33">Usuario</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                <ul class="flash-messages">
+                  {% for message in messages %}
+                    <span class="alert alert-danger">{{ message }}</span>
+                  {% endfor %}
+                </ul>
+            {% endif %}
+        {% endwith %}
+            <form id="add-user-form">
+                <div class="modal-body">
+                    <label>Nombre: </label>
+                    <div class="form-group">
+                        <input type="text" name="firstname" id="firstname" placeholder="Ingrese nombre de usuario" class="form-control" />
+                    </div>
+                    <label>Apellido: </label>
+                    <div class="form-group">
+                        <input type="text" name="lastname" id="lastname" placeholder="Ingrese apellido de usuario" class="form-control" />
+                    </div>
+                    <label>Nombre de Usuario: </label>
+                    <div class="form-group">
+                        <input type="text" name="username" id="username" placeholder="Ingrese nombre de usuario" class="form-control" />
+                    </div>
+
+                    <label>Password: </label>
+                    <div class="form-group">
+                        <input type="password" name="password" id="password" placeholder="Password" class="form-control" />
+                    </div>
+                    <label>Rol: </label>
+                    <select name="role" id="role" class="form-control">
+                      <option value="Admin">Admin</option>
+                      <option value="Admin">Admin</option>
+                    </select>
+                    <label>Status: </label>
+                    <select name="status" id="status" class="form-control">
+                      <option value="1">Activo</option>
+                      <option value="1">Activo</option>
+                    </select>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-danger" data-dismiss="modal">Cerrar</button>
+                    <button type="submit" class="btn btn-outline-success">Guardar Datos</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script src="{{url_for('static', filename='js/jquery-3.3.1.min.js')}}"></script>
+<!-- Sweetalert CSS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.1.4/dist/sweetalert2.min.css">
+<!-- Sweetalert JS -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.1.4/dist/sweetalert2.min.js"></script>
+
+<script>
+    $(document).ready(function() {
+      $('#add-user-form').validate({
+        rules: {
+          firstname: {
+            required: true,
+          },
+          lastname: {
+            required: true,
+          },
+          user: {
+            required: true,
+          },
+          password: {
+            required: true,
+          },
+        },
+        messages: {
+          firstname: {
+            required: "Por favor, ingrese un nombre.",
+          },
+          lastname: {
+            required: "Por favor, ingrese un apellido.",
+          },
+          user: {
+            required: "Por favor, ingrese un usuario.",
+          },
+          password: {
+            required: "Por favor, ingrese una contraseña.",
+          },
+        },
+        submitHandler: function(form) {
+          $.ajax({
+            url: '/users/create',
+            type: 'POST',
+            data: $(form).serialize(),
+            beforeSend: function(xhr, settings) {
+                    // Agregar el token CSRF en la cabecera de la petición
+                    if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type) && !this.crossDomain) {
+                        xhr.setRequestHeader("X-CSRFToken", "{{ csrf_token() }}");
+                    }
+            },
+            success: function(response) {
+              if (response.success) {
+                    Swal.fire(
+                        'Usuario',
+                        'Usuario agregado exitosamente',
+                        'success'
+                    )
+                    $('#modalUser').modal('hide');
+                    location.reload()
+              } else {
+                var errorhtml = '';
+                var errors = response.errors;
+                for (var fieldName in errors) {
+                    if (errors.hasOwnProperty(fieldName)) {
+                        var fieldErrors = errors[fieldName];
+                        for (var i = 0; i < fieldErrors.length; i++) {
+                            var errorMessage = fieldErrors[i];
+                            errorhtml += '<ul class="list-group"><li class="list-group-item alert alert-danger">' + errorMessage + '</li></ul>';
+                        }
+                    }
+                }
+                Swal.fire(
+                    'Error?',
+                    errorhtml,
+                    'error'
+                )
+              }
+            },
+            error: function() {
+                Swal.fire(
+                    'Error?',
+                    'Error al agregar usuario?',
+                    'error'
+                )
+            },
+          });
+        },
+      });
+    });
+
+
+
+    function confirmDelete(userId) {
+    Swal.fire({
+      title: '¿Eliminar?',
+      text: '¡Seguro de eliminar el usuario!',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6',
+      confirmButtonText: 'Sí, eliminar',
+      cancelButtonText: 'Cancelar'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        // Hacer la solicitud de eliminación utilizando AJAX
+        $.ajax({
+          url: '/delete_user/' + userId,
+          type: 'DELETE',
+          beforeSend: function(xhr, settings) {
+                    // Agregar el token CSRF en la cabecera de la petición
+                    if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type) && !this.crossDomain) {
+                        xhr.setRequestHeader("X-CSRFToken", "{{ csrf_token() }}");
+                    }
+            },
+          success: function(response) {
+            if (response.success) {
+              // Mostrar alerta de éxito
+              Swal.fire({
+                title: '¡Eliminado!',
+                text: 'El usuario ha sido eliminado.',
+                icon: 'success'
+              }).then(() => {
+                // Recargar la página
+                location.reload();
+              });
+            }
+          }
+        });
+      }
+    });
+  }
+  </script>

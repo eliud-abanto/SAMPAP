@@ -1,0 +1,168 @@
+{% extends 'layout.html' %} {% block content %}
+
+<!-- Blog Edit -->
+<div>
+  <div class="content-header-left col-12 mb-2">
+    <div class="row breadcrumbs-top">
+      <div class="col-12">
+        <h2 class="content-header-title float-left mb-0">Editar Post  <a href="#" class="btn btn-outline-warning">Volver << </a></h2>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="col-md-12 col-12">
+  <div class="row">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-body">
+          <!--{% with messages = get_flashed_messages() %}
+            {% if messages %}
+              <ul class="flash-messages">
+              {% for message in messages %}
+                <li>{{ message }}</li>
+              {% endfor %}
+              </ul>
+            {% endif %}
+          {% endwith %}-->
+          <!-- Form -->
+          <form novalidate class="mt-2" method="POST" enctype="multipart/form-data">
+            {{form.hidden_tag()}}
+            <div class="row">
+              <div class="col-md-6 col-12">
+                <div class="form-group mb-2">
+                  <label for="blog-edit-title">Titulo</label>
+                  <input
+                    type="text"
+                    id="blog-edit-title"
+                    class="form-control"
+                    name="title"
+                    value="{{post.title}}"
+                  />
+                  {% for error in form.title.errors %}
+                  <span class="badge badge-danger mt-2">{{error}}</span>
+                  {% endfor %}
+                </div>
+              </div>
+              <div class="col-md-6 col-12">
+                <div class="form-group mb-2">
+                  <label for="blog-edit-status">Estado</label>
+                  <select
+                    class="form-control"
+                    name="status"
+                    id="blog-edit-status"
+                  >
+                    <option value="">Seleccione</option>
+                    <option value="1" {% if post.status == 1 %}selected{% endif %}>Activo</option>
+                    <option value="0" {% if post.status == 0 %}selected{% endif %}>Inactivo</option>
+                  </select>
+                  {% for error in form.status.errors %}
+                  <span class="badge badge-danger mt-2">{{error}}</span>
+                  {% endfor %}
+                </div>
+              </div>
+              <div class="col-12">
+                <div class="form-group mb-2">
+                  <label>Descripcion</label>
+                  <textarea
+                    name="description"
+                    id=""
+                    cols="30"
+                    rows="10"
+                    class="form-control"
+                  >{{post.description}}</textarea>
+                  {% for error in form.description.errors %}
+                  <span class="badge badge-danger mt-2">{{error}}</span>
+                  {% endfor %}
+                  <!--<div id="blog-editor-wrapper">
+                    <div id="blog-editor-container">
+                      <div class="editor">
+                        <input
+                          type="text"
+                          id="blog-editor-container"
+                          class="form-control"
+                          name="description"
+                        />
+                      </div>
+                    </div>
+                  </div>-->
+                </div>
+              </div>
+              <div class="col-12 mb-2">
+                <div class="border rounded p-2">
+                  <h4 class="mb-1">Imagen</h4>
+                  <div class="media flex-column flex-md-row">
+                    {% if post.image %}
+                        <img src="{{ url_for('static', filename='images/posts/' + post.image) }}" alt="Blog Featured Image" class="img-fluid" id="blog-feature-image" class="rounded mr-2 mb-1 mb-md-0" width="170" height="110" >
+                    {% else %}
+                        <img src="{{ url_for('static', filename='images/default-post-image.png') }}" alt="Default Post Image" class="img-fluid">
+                    {% endif %}
+                    <div class="media-body">
+                      <small class="text-muted"
+                        >Required image resolution 960x400, image size
+                        10mb.</small
+                      >
+                      <p class="my-50">
+                        <a href="javascript:void(0);" id="blog-image-text"
+                          >C:\fakepath\{{ url_for('static', filename='images/posts/' + post.image) }}</a
+                        >
+                      </p>
+                      <div class="d-inline-block">
+                        <div class="form-group mb-0">
+                          <div class="custom-file">
+                            <input
+                              type="file"
+                              class="custom-file-input"
+                              id="blogCustomFile"
+                              name="image"
+                            />
+                            <label
+                              class="custom-file-label"
+                              for="blogCustomFile"
+                              >Archivo</label
+                            >
+                            {% for error in form.image.errors %}
+                            <span class="badge badge-danger mt-2"
+                              >{{error}}</span
+                            >
+                            {% endfor %}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-12 mt-50">
+                <button type="submit" class="btn btn-outline-warning mr-1">
+                  Guardar
+                </button>
+              </div>
+            </div>
+          </form>
+          <!--/ Form -->
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!--/ Blog Edit -->
+<!-- Sweetalert CSS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.1.4/dist/sweetalert2.min.css">
+<!-- Sweetalert JS -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.1.4/dist/sweetalert2.min.js"></script>
+
+{% with messages = get_flashed_messages() %}
+  {% if messages %}
+    {% for message in messages %}
+      <script>
+        Swal.fire(
+          'Post',
+          "{{ message }}",
+          'success'
+        )
+      </script>
+    {% endfor %}
+  {% endif %}
+{% endwith %}
+
+{% endblock %}

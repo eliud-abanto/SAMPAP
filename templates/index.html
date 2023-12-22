@@ -1,0 +1,182 @@
+{% extends 'layout.html' %} {% block content %}
+
+<!-- Statistics Card -->
+<div class="col-xl-12 col-md-12 col-12">
+  <div class="row">
+    {% for birthdate in birthdates %}
+      <!-- Congratulations Card -->
+      <div class="col-6 col-md-6 col-lg-6">
+        <div class="card card-congratulations">
+            <div class="card-body text-center">
+                <img src="{{url_for('static', filename='app-assets/images/elements/decore-left.png')}}" class="congratulations-img-left" alt="card-img-left" />
+                <img src="{{url_for('static', filename='app-assets/images/elements/decore-right.png')}}" class="congratulations-img-right" alt="card-img-right" />
+                <div class="avatar avatar-xl bg-primary shadow">
+                    <div class="avatar-content">
+                        <i data-feather="award" class="font-large-1"></i>
+                    </div>
+                </div>
+                <div class="text-center">
+                    <h1 class="mb-1 text-white">Felicidades 🎉 {{birthdate.fullname}},</h1>
+                    <p class="card-text m-auto w-75">
+                        <strong>Te desea la GGCITI</strong>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--/ Congratulations Card -->
+  {% endfor %}
+   <!-- {% for birthdate in birthdates %}
+      <div class="col-md-6">
+          <div class="card card-congratulation-medal">
+            <div class="card-body">
+              <h5>Felicidades 🎉 {{birthdate.fullname}}</h5>
+              <p class="card-text font-small-3">En tu cumpleaños</p>
+              <h3 class="mb-75 mt-2 pt-50">
+                <a href="javascript:void(0);">Te desea la GGCITI</a>
+              </h3>
+              <img src="{{url_for('static', filename='app-assets/images/illustration/badge.svg')}}" class="congratulation-medal" alt="Medal Pic" />
+            </div>
+          </div>
+         
+      </div>
+    {% endfor %}-->
+  </div>
+  <!-- Basic Carousel And Optional Carousel start -->
+  <section id="basic-carousel">
+    <div class="row">
+      <div class="col-md-12 col-sm-12">
+        <div class="card">
+          <div class="card-body">
+            <div
+              id="carousel-example-generic"
+              class="carousel slide"
+              data-ride="carousel"
+            >
+              <ol class="carousel-indicators">
+                <li
+                  data-target="#carousel-example-generic"
+                  data-slide-to="0"
+                  class="active"
+                ></li>
+                <li
+                  data-target="#carousel-example-generic"
+                  data-slide-to="1"
+                ></li>
+                <li
+                  data-target="#carousel-example-generic"
+                  data-slide-to="2"
+                ></li>
+              </ol>
+              <div class="carousel-inner" role="listbox">
+                <div class="carousel-item active text-center">
+                  <img
+                    class="img-fluid"
+                    src="{{url_for('static', filename='app-assets/images/img-car.png')}}"
+                    alt="First slide"
+                  />
+                </div>
+                <div class="carousel-item text-center">
+                  <img
+                    class="img-fluid"
+                    src="{{url_for('static', filename='app-assets/images/img-car2.png')}}"
+                    alt="Second slide"
+                  />
+                </div>
+                <div class="carousel-item text-center">
+                  <img
+                    class="img-fluid"
+                    src="{{url_for('static', filename='app-assets/images/img-car3.png')}}"
+                    alt="Third slide"
+                  />
+                </div>
+              </div>
+              <a
+                class="carousel-control-prev"
+                href="#carousel-example-generic"
+                role="button"
+                data-slide="prev"
+              >
+                <span
+                  class="carousel-control-prev-icon"
+                  aria-hidden="true"
+                ></span>
+                <span class="sr-only">Previous</span>
+              </a>
+              <a
+                class="carousel-control-next"
+                href="#carousel-example-generic"
+                role="button"
+                data-slide="next"
+              >
+                <span
+                  class="carousel-control-next-icon"
+                  aria-hidden="true"
+                ></span>
+                <span class="sr-only">Next</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <!-- Basic Carousel And Optional Carousel start end -->
+
+  <!-- Nexta events -->
+  <div class="row">
+    <div class="col-md-12">
+      <div class="content-header row">
+        <div class="content-header-left col-md-9 col-12 mb-2">
+          <div class="row breadcrumbs-top">
+            <div class="col-12">
+              <h2 class="content-header-title float-left mb-0">
+                ULTIMOS ARCHIVOS
+              </h2>
+            </div>
+          </div>
+        </div>
+        <div
+          class="content-header-right text-md-right col-md-3 col-12 d-md-block d-none"
+        >
+          <div class="form-group breadcrumb-right">
+            <div class="dropdown"></div>
+          </div>
+        </div>
+      </div>
+      <div class="content-body">
+        <!-- Examples -->
+        <section id="card-demo-example">
+          <div class="row match-height">
+            {% for post in posts %}
+              <div class="col-md-6 col-lg-4">
+                <div class="card">
+                  <img
+                    class="card-img-top"
+                    src="{{ url_for('static', filename='images/posts/' + post.image) }}"
+                    alt="Card image cap"
+                  />
+                  <div class="card-body">
+                    <h4 class="card-title">{{post.title | truncate(100)}}</h4>
+                    <p class="card-text blog-content-truncate">
+                      {{post.description | truncate(150)}} 
+                      <a href="{{ url_for('blog.post_detail', slug=post.slug) }}" class="text-warning">Leer mas..</a>
+                    </p>
+                    <!--<a href="{{ url_for('blog.post_detail', slug=post.slug) }}" class="btn btn-outline-warning"
+                      >Leer mas</a
+                    >-->
+                  </div>
+                </div>
+              </div>
+            {% endfor %}
+          </div>
+        </section>
+        <!-- Examples -->
+      </div>
+    </div>
+  </div>
+  <!-- Nexta events end-->
+</div>
+<!--/ Statistics Card -->
+
+{% endblock %}

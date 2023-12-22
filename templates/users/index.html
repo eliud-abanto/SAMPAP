@@ -1,0 +1,36 @@
+{% extends 'layout.html' %} {% block content %}
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/bs4/dt-1.11.3/datatables.min.css"/>
+<script type="text/javascript" src="https://cdn.datatables.net/v/bs4/dt-1.11.3/datatables.min.js"></script>
+<!-- Statistics Card -->
+<div class="col-xl-12 col-md-12 col-12">
+  <div class="card card-statistics">
+    <div class="card-body statistics-body">
+                <section id="basic-datatable">
+                  <div class="row">
+                      <div class="col-12">
+                          <div class="card">
+                            <div class="table-responsive">
+                              <table class="datatables-basic table">
+                                  <thead>
+                                      <tr>
+                                          <th>Nombre</th>
+                                          <th>Apellido</th>
+                                          <th>Usuario</th>
+                                          <th>Rol</th>
+                                          <th>Estado</th>
+                                          <th>Acciones</th>
+                                      </tr>
+                                  </thead>
+                              </table>
+                            </div>
+                          </div>
+                      </div>
+                  </div> 
+              </section>
+    </div>
+  </div>
+</div>
+<!--/ Statistics Card -->
+{% include 'users/scripts.html' %}
+{% include 'users/modalUser.html' %}
+{% include 'users/modal-user.html' %} {% endblock %}

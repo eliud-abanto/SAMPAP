@@ -1,0 +1,297 @@
+<!--<link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css"/>-->
+<script src="{{url_for('static', filename='js/jquery-3.3.1.min.js')}}"></script>
+<!--<script type="text/javascript" src="//cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>-->
+<script>
+
+$(function () {
+
+  var dt_basic_table = $('.datatables-basic')
+
+
+  // Multilingual DataTable
+  // --------------------------------------------------------------------
+
+  if (dt_basic_table.length) {
+    var dt_basic = dt_basic_table.DataTable({
+      "responsive": true,
+      "autoWidth": false,
+      ajax: {
+            "method": "GET",
+            "url": '/list-users',
+        },
+      columns: [
+        { data: 'firstname' },
+        { data: 'lastname' },
+        { data: 'username' },
+        { data: 'role' },
+        { data: 'status' },
+        { data: '' },
+      ],
+      columnDefs: [
+        {
+          // Label
+          targets: -2,
+          render: function (data, type, full, meta) {
+            var $status_number = full['status'];
+            var $status = {
+              0: { title: 'Inactivo', class: 'badge-light-danger' },
+              1: { title: 'Activo', class: 'badge-light-success' },
+            };
+            if (typeof $status[$status_number] === 'undefined') {
+              return data;
+            }
+            return (
+              '<span class="badge badge-pill ' +
+              $status[$status_number].class +
+              '">' +
+              $status[$status_number].title +
+              '</span>'
+            );
+          }
+        },
+        {
+          // Actions
+          targets: -1,
+          title: 'Actions',
+          orderable: false,
+          render: function (data, type, full, meta) {
+            return (
+              '<button onclick="editar('+full['id']+')" class="btn btn-info btn-sm mr-2">' +
+              feather.icons['edit'].toSvg({ class: 'font-small-4' }) +
+              '</button>' +
+              '<button onclick="confirmDelete('+full['id']+')" class="btn btn-danger btn-sm">' +
+              feather.icons['delete'].toSvg({ class: 'font-small-4' }) +
+              '</button>'
+            );
+          }
+        }
+      ],
+      order: [[2, 'desc']],
+      dom:
+        '<"card-header border-bottom p-1"<"head-label"><"dt-action-buttons text-right"B>><"d-flex justify-content-between align-items-center mx-0 row"<"col-sm-12 col-md-6"l><"col-sm-12 col-md-6"f>>t<"d-flex justify-content-between mx-0 row"<"col-sm-12 col-md-6"i><"col-sm-12 col-md-6"p>>',
+      displayLength: 7,
+      lengthMenu: [7, 10, 25, 50, 75, 100],
+      buttons: [
+        {
+          text: feather.icons['plus'].toSvg({ class: 'mr-50 font-small-4' }) + 'Agregar nuevo usuario',
+          className: 'create-new btn btn-outline-warning',
+          attr: {
+            'data-toggle': 'modal',
+            //'data-target': '#modals-slide-in',
+            'onclick':'openModalUser()'
+          },
+          init: function (api, node, config) {
+            $(node).removeClass('btn-secondary');
+          }
+        }
+      ],
+      responsive: {
+        details: {
+          display: $.fn.dataTable.Responsive.display.modal({
+            header: function (row) {
+              var data = row.data();
+              return 'Details of ' + data['firstname'];
+            }
+          }),
+          type: 'column',
+          renderer: function (api, rowIdx, columns) {
+            var data = $.map(columns, function (col, i) {
+              return col.title !== '' // ? Do not show row in modal popup if title is blank (for check box)
+                ? '<tr data-dt-row="' +
+                    col.rowIndex +
+                    '" data-dt-column="' +
+                    col.columnIndex +
+                    '">' +
+                    '<td>' +
+                    col.title +
+                    ':' +
+                    '</td> ' +
+                    '<td>' +
+                    col.data +
+                    '</td>' +
+                    '</tr>'
+                : '';
+            }).join('');
+
+            return data ? $('<table class="table"/>').append(data) : false;
+          }
+        }
+      },
+      language: {
+        paginate: {
+          // remove previous & next text from pagination
+          previous: '&nbsp;',
+          next: '&nbsp;'
+        },
+        "search": "Buscar:",
+        "infoFiltered":   "(filtrado do total de _MAX_ entradas)",
+        "zeroRecords": "No hay resultados",
+        "loadingRecords": "Cargando...",
+        "lengthMenu": "Mostrar _MENU_ entradas",
+        "info": "Mostrando _START_ a _END_ de _TOTAL_ entradas",
+        "search": "Buscar:",
+        "responsive": true,
+      }
+    });
+    $('div.head-label').html('<h6 class="mb-0">Lista de Usuarios</h6>');
+  }
+
+  $('#add-user-form').validate({
+        rules: {
+          firstname: {
+            required: true,
+          },
+          lastname: {
+            required: true,
+          },
+          username: {
+            required: true,
+          },
+          /*password: {
+            required: true,
+          },*/
+        },
+        messages: {
+          firstname: {
+            required: "Por favor, ingrese un nombre.",
+          },
+          lastname: {
+            required: "Por favor, ingrese un apellido.",
+          },
+          username: {
+            required: "Por favor, ingrese un usuario.",
+          },
+          password: {
+            required: "Por favor, ingrese una contraseña.",
+          },
+        },
+        submitHandler: function(form) {
+          $.ajax({
+            url: '/users/create',
+            type: 'POST',
+            data: $(form).serialize(),
+            beforeSend: function(xhr, settings) {
+                    // Agregar el token CSRF en la cabecera de la petición
+                    if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type) && !this.crossDomain) {
+                        xhr.setRequestHeader("X-CSRFToken", "{{ csrf_token() }}");
+                    }
+            },
+            success: function(response) {
+              if (response.success) {
+                    Swal.fire(
+                        'Usuario',
+                        response.msg,
+                        'success'
+                    )
+                    $('#modals-slide-in').modal('hide');
+                    $('#add-user-form')[0].reset()
+                    dt_basic.ajax.reload()
+              } else {
+                var errorhtml = '';
+                var errors = response.errors;
+                for (var fieldName in errors) {
+                    if (errors.hasOwnProperty(fieldName)) {
+                        var fieldErrors = errors[fieldName];
+                        for (var i = 0; i < fieldErrors.length; i++) {
+                            var errorMessage = fieldErrors[i];
+                            errorhtml += '<ul class="list-group"><li class="list-group-item alert alert-danger">' + errorMessage + '</li></ul>';
+                        }
+                    }
+                }
+                Swal.fire(
+                    'Error?',
+                    errorhtml,
+                    'error'
+                )
+              }
+            },
+            error: function() {
+                Swal.fire(
+                    'Error?',
+                    'Error al agregar usuario?',
+                    'error'
+                )
+            },
+          });
+        },
+      });
+
+});
+
+function openModalUser() {
+    document.querySelector('#id').value = 0;
+    $('#modals-slide-in').find('.modal-header').html('<h5 class="modal-title">Nuevo Usuario</h5>')
+    document.querySelector('#add-user-form').reset();
+    $('#modals-slide-in').modal('show')
+}
+
+function editar(id) {
+        //$('#modals-slide-in').find('.data-submit').html('Editar')
+        $('#modals-slide-in').find('.modal-header').html('<h5 class="modal-title">Editar Usuario</h5>')
+
+
+        var request = (window.XMLHttpRequest) ? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP');
+        var url = '/user/edit/'+id;
+        request.open('GET',url,true);
+        request.send();
+        request.onreadystatechange = function() {
+            if(request.readyState == 4 && request.status == 200) {
+                var data = JSON.parse(request.responseText);
+                if(data.status) {
+                    document.querySelector('#id').value = data.id;
+                    document.querySelector('#firstname').value = data.firstname;
+                    document.querySelector('#lastname').value = data.lastname;
+                    document.querySelector('#username').value = data.username;
+                    document.querySelector('#role').value = data.role;
+                    document.querySelector('#status').value = data.status;
+                    $('#modals-slide-in').modal('show')
+                } else {
+                    swal('Atencion',data.msg,'error');
+                }
+            }
+        }
+}
+
+
+function confirmDelete(userId, event) {
+  event.preventDefault();
+    Swal.fire({
+      title: '¿Eliminar?',
+      text: '¡Seguro de eliminar el usuario!',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6',
+      confirmButtonText: 'Sí, eliminar',
+      cancelButtonText: 'Cancelar'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        event.preventDefault();
+        // Hacer la solicitud de eliminación utilizando AJAX
+        $.ajax({
+          url: '/delete_user/' + userId,
+          type: 'DELETE',
+          beforeSend: function(xhr, settings) {
+                    // Agregar el token CSRF en la cabecera de la petición
+                    if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type) && !this.crossDomain) {
+                        xhr.setRequestHeader("X-CSRFToken", "{{ csrf_token() }}");
+                    }
+            },
+          success: function(response) {
+            if (response.success) {
+              // Mostrar alerta de éxito
+              Swal.fire({
+                title: '¡Eliminado!',
+                text: 'El usuario ha sido eliminado.',
+                icon: 'success'
+              }).then(() => {
+                dt_basic.ajax.draw();
+              });
+            }
+          }
+        });
+      }
+    });
+  }
+      
+</script>

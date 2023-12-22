@@ -1,0 +1,44 @@
+ <!-- Modal to add new record -->
+ <div class="modal modal-slide-in fade" id="modals-slide-in">
+    <div class="modal-dialog sidebar-sm">
+        <!--<form class="add-new-record modal-content pt-0" id="add-user-form"></form>-->
+        <form class="modal-content pt-0" id="add-employee-form">
+            <input type="hidden" name="id" id="id" value="">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">×</button>
+            <div class="modal-header mb-1">
+                <h5 class="modal-title" id="exampleModalLabel">Nuevo Estudiante</h5>
+            </div>
+            <div class="modal-body flex-grow-1">
+                <div class="form-group">
+                    <div class="form-group">
+                        <label class="form-label">Cédula</label>
+                        <input type="text" class="form-control dt-full-name" name="p00" id="p00" placeholder="Ingrese la cédula" />
+                    </div>
+                    <label class="form-label">Nombre</label>
+                    <input type="text" class="form-control dt-full-name" name="fullname" id="fullname" placeholder="Ingrese nombre" />
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Fecha de Nacimiento</label>
+                  <input type="date" class="form-control dt-full-name" name="birthdate" id="birthdate" placeholder="" />
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Carrera</label>
+                    <select name="management" id="management" class="form-control">
+                      <option value="">.:Seleccione:.</option>
+                      <option value="Ingeniería en Informática">Ingeniería en Informática</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Status</label>
+                  <select name="status" id="status" class="form-control">
+                    <option value="">.:Seleccione:.</option>
+                    <option value="1">Activo</option>
+                    <option value="0">Inactivo</option>
+                  </select>
+              </div>
+                <button type="submit" class="btn btn-outline-success data-submit mr-1">Guardar</button>
+                <button type="reset" class="btn btn-outline-secondary" data-dismiss="modal">Cancel</button>
+            </div>
+        </form>
+    </div>
+</div>

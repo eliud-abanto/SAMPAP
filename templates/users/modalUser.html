@@ -1,0 +1,49 @@
+ <!-- Modal to add new record -->
+ <div class="modal modal-slide-in fade" id="modals-slide-in">
+    <div class="modal-dialog sidebar-sm">
+        <!--<form class="add-new-record modal-content pt-0" id="add-user-form"></form>-->
+        <form class="modal-content pt-0" id="add-user-form">
+            <input type="hidden" name="id" id="id" value="">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">×</button>
+            <div class="modal-header mb-1">
+                <h5 class="modal-title" id="exampleModalLabel">Nuevo Usuario</h5>
+            </div>
+            <div class="modal-body flex-grow-1">
+                <div class="form-group">
+                    <label class="form-label">Nombre</label>
+                    <input type="text" class="form-control dt-full-name" name="firstname" id="firstname" placeholder="Ingrese nombre" />
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Apellido</label>
+                    <input type="text" class="form-control dt-full-name" name="lastname" id="lastname" placeholder="Ingrese apellido" />
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Nombre de Usuario</label>
+                  <input type="text" class="form-control dt-full-name" name="username" id="username" placeholder="Ingrese nombre de usuario" />
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Contraseña</label>
+                    <input type="password" class="form-control dt-full-name" name="password" id="password" placeholder="Ingrese Contraseña" />
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Rol</label>
+                    <select name="role" id="role" class="form-control">
+                      <option value="">.:Seleccione:.</option>
+                      <option value="Admin">Admin</option>
+                      <option value="Estudiante">Estudiante</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Status</label>
+                  <select name="status" id="status" class="form-control">
+                    <option value="">.:Seleccione:.</option>
+                    <option value="1">Activo</option>
+                    <option value="0">Inactivo</option>
+                  </select>
+              </div>
+                <button type="submit" class="btn btn-outline-success data-submit mr-1">Guardar</button>
+                <button type="reset" class="btn btn-outline-secondary" data-dismiss="modal">Cancel</button>
+            </div>
+        </form>
+    </div>
+</div>
